@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TECHVAULT — Computer Accessories</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #060810;
+    --surface: #0d1117;
+    --surface2: #131920;
+    --surface3: #1a2332;
+    --border: #1e2d3d;
+    --border2: #2a3f52;
+    --accent: #00d4ff;
+    --accent2: #ff3d6b;
+    --accent3: #7c3aed;
+    --accent-glow: rgba(0,212,255,0.18);
+    --text: #e8f4f8;
+    --text2: #7a9bb5;
+    --text3: #4a6580;
+    --gold: #f5a623;
+    --green: #00e676;
+    --radius: 12px;
+    --radius-lg: 20px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  /* ── NOISE TEXTURE ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: .5;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(6,8,16,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .logo {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 28px;
+    letter-spacing: 3px;
+    background: linear-gradient(135deg, var(--accent), #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    cursor: pointer;
+  }
+  .logo span { color: var(--accent2); -webkit-text-fill-color: var(--accent2); }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .cart-btn {
+    position: relative;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    padding: 8px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+    transition: all .2s;
+  }
+  .cart-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .cart-count {
+    background: var(--accent2);
+    color: #fff;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    font-size: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    padding: 80px 24px 60px;
+    text-align: center;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,212,255,.12) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(124,58,237,.1) 0%, transparent 60%);
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(0,212,255,.08);
+    border: 1px solid rgba(0,212,255,.25);
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+  }
+  .hero-badge::before { content: '◈'; }
+  .hero h1 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(52px, 10vw, 96px);
+    line-height: .95;
+    letter-spacing: 4px;
+    margin-bottom: 16px;
+  }
+  .hero h1 .line1 { display: block; color: var(--text); }
+  .hero h1 .line2 {
+    display: block;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero p {
+    font-size: 16px; color: var(--text2); max-width: 480px; margin: 0 auto 32px;
+    line-height: 1.6;
+  }
+  .hero-stats {
+    display: flex; justify-content: center; gap: 40px;
+    flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Bebas Neue', cursive; font-size: 36px; color: var(--accent); }
+  .stat-label { font-size: 12px; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; }
+
+  /* ── MAIN LAYOUT ── */
+  .shop {
+    max-width: 1400px; margin: 0 auto;
+    padding: 40px 24px 80px;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 32px;
+  }
+  @media (max-width: 900px) {
+    .shop { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .sidebar.open { display: block; position: fixed; inset: 64px 0 0 0; z-index: 90; overflow-y: auto; padding: 24px; background: var(--bg); }
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar { position: relative; }
+  .sidebar-section { margin-bottom: 32px; }
+  .sidebar-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .filter-chip {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all .15s;
+    font-size: 14px;
+    color: var(--text2);
+    border: 1px solid transparent;
+    margin-bottom: 4px;
+    user-select: none;
+  }
+  .filter-chip:hover { background: var(--surface2); color: var(--text); }
+  .filter-chip.active { background: rgba(0,212,255,.08); border-color: rgba(0,212,255,.3); color: var(--accent); }
+  .filter-chip .chip-icon { font-size: 16px; }
+  .filter-chip .chip-count {
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+  }
+  .price-range { padding: 4px 0; }
+  .price-labels { display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text2); margin-top: 8px; }
+  input[type=range] {
+    width: 100%; accent-color: var(--accent);
+    background: transparent;
+  }
+  .rating-filter { display: flex; gap: 6px; flex-wrap: wrap; }
+  .rating-btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    font-size: 13px;
+    font-family: 'Syne', sans-serif;
+    transition: all .15s;
+  }
+  .rating-btn.active, .rating-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(245,166,35,.08); }
+
+  /* ── MAIN CONTENT ── */
+  .main { min-width: 0; }
+  .controls {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .search-wrap {
+    flex: 1; min-width: 200px;
+    position: relative;
+  }
+  .search-wrap svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text3); pointer-events: none; }
+  .search-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 12px 16px 12px 44px;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .search-input::placeholder { color: var(--text3); }
+  .search-input:focus { border-color: var(--accent); }
+  .sort-select {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    outline: none;
+    cursor: pointer;
+  }
+  .filter-toggle {
+    display: none;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  @media (max-width: 900px) { .filter-toggle { display: flex; align-items: center; gap: 8px; } }
+  .results-info { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text3); margin-bottom: 4px; }
+
+  /* ── PRODUCT GRID ── */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+  }
+  .product-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+    position: relative;
+  }
+  .product-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border2);
+    box-shadow: 0 20px 60px rgba(0,0,0,.4), 0 0 0 1px rgba(0,212,255,.1);
+  }
+  .card-badge {
+    position: absolute; top: 14px; left: 14px; z-index: 2;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .badge-new { background: var(--accent); color: var(--bg); }
+  .badge-sale { background: var(--accent2); color: #fff; }
+  .badge-hot { background: var(--gold); color: var(--bg); }
+  .card-img {
+    width: 100%; aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 72px;
+    background: linear-gradient(135deg, var(--surface2), var(--surface3));
+    transition: transform .3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-img::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(0,212,255,.06), transparent 70%);
+  }
+  .product-card:hover .card-img { transform: scale(1.04); }
+  .card-body { padding: 16px; }
+  .card-brand { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+  .card-name { font-size: 15px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; color: var(--text); }
+  .card-rating { display: flex; align-items: center; gap: 6px; margin-bottom: 12px; }
+  .stars { color: var(--gold); font-size: 12px; letter-spacing: 1px; }
+  .rating-count { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); }
+  .card-footer { display: flex; align-items: center; justify-content: space-between; }
+  .price-wrap { display: flex; flex-direction: column; }
+  .price { font-family: 'Bebas Neue', cursive; font-size: 24px; color: var(--text); letter-spacing: 1px; }
+  .price-old { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); text-decoration: line-through; }
+  .quick-add {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    color: var(--bg);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .quick-add:hover { background: #00b8db; transform: scale(1.1); }
+  .no-results { text-align: center; padding: 80px 24px; color: var(--text3); }
+  .no-results h3 { font-size: 24px; margin-bottom: 8px; color: var(--text2); }
+
+  /* ── MODAL OVERLAY ── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(6,8,16,.85);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: 20px;
+    overflow-y: auto;
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  /* ── PRODUCT DETAIL ── */
+  .detail {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 24px;
+    width: 100%; max-width: 960px;
+    margin: auto;
+    overflow: hidden;
+    transform: translateY(20px);
+    transition: transform .3s;
+    position: relative;
+  }
+  .modal-overlay.open .detail { transform: translateY(0); }
+  .detail-close {
+    position: absolute; top: 20px; right: 20px; z-index: 10;
+    width: 36px; height: 36px;
+    background: var(--surface3);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .detail-close:hover { border-color: var(--accent2); color: var(--accent2); }
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  @media (max-width: 680px) { .detail-grid { grid-template-columns: 1fr; } }
+  .detail-gallery {
+    background: var(--surface2);
+    padding: 32px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .main-img {
+    aspect-ratio: 1;
+    background: linear-gradient(135deg, var(--surface3), #0d1a26);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 100px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border2);
+    transition: all .3s;
+  }
+  .main-img::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 30% 30%, rgba(0,212,255,.1), transparent 60%);
+  }
+  .thumb-row { display: flex; gap: 10px; }
+  .thumb {
+    flex: 1; aspect-ratio: 1;
+    background: var(--surface3);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all .15s;
+    overflow: hidden;
+  }
+  .thumb.active { border-color: var(--accent); }
+  .thumb:hover { border-color: var(--border2); }
+  .detail-info { padding: 32px; overflow-y: auto; max-height: 90vh; }
+  .detail-brand { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+  .detail-name { font-family: 'Bebas Neue', cursive; font-size: 36px; line-height: 1; letter-spacing: 2px; margin-bottom: 12px; }
+  .detail-rating { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .detail-rating .stars { font-size: 14px; }
+  .detail-rating .rating-count { font-size: 12px; }
+  .detail-price-row { display: flex; align-items: baseline; gap: 14px; margin-bottom: 20px; }
+  .detail-price { font-family: 'Bebas Neue', cursive; font-size: 44px; color: var(--text); letter-spacing: 2px; }
+  .detail-price-old { font-family: 'DM Mono', monospace; font-size: 16px; color: var(--text3); text-decoration: line-through; }
+  .detail-save { font-size: 13px; color: var(--green); font-weight: 700; }
+  .section-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+  .variant-group { margin-bottom: 20px; }
+  .variant-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .variant-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    transition: all .15s;
+  }
+  .variant-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,.08); }
+  .variant-btn:hover:not(.active) { border-color: var(--text3); color: var(--text); }
+  .color-btn {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all .15s;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+  }
+  .color-btn.active { outline-color: var(--accent); }
+  .qty-row { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  .qty-btn {
+    width: 36px; height: 36px;
+    background: var(--surface3);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .qty-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .qty-num { font-family: 'Bebas Neue', cursive; font-size: 24px; min-width: 28px; text-align: center; }
+  .add-cart-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--accent), #0099cc);
+    border: none;
+    border-radius: 12px;
+    color: var(--bg);
+    font-family: 'Bebas Neue', cursive;
+    font-size: 20px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all .2s;
+    margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .add-cart-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,212,255,.3); }
+  .add-cart-btn:active { transform: translateY(0); }
+  .add-cart-btn.added { background: linear-gradient(135deg, var(--green), #00b84d); }
+  .wishlist-btn {
+    width: 100%;
+    padding: 14px;
+    background: transparent;
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    color: var(--text2);
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .wishlist-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+  .detail-features { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border); }
+  .feature-item { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; font-size: 14px; color: var(--text2); }
+  .feature-icon { color: var(--accent); font-size: 16px; margin-top: 1px; flex-shrink: 0; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 300;
+    background: var(--surface2);
+    border: 1px solid var(--green);
+    border-radius: 12px;
+    padding: 14px 20px;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 14px;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all .3s;
+    box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast-icon { font-size: 20px; }
+
+  /* ── SCROLL REVEAL ── */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  .product-card { animation: fadeUp .4s both; }
+  .product-card:nth-child(1) { animation-delay: .05s; }
+  .product-card:nth-child(2) { animation-delay: .10s; }
+  .product-card:nth-child(3) { animation-delay: .15s; }
+  .product-card:nth-child(4) { animation-delay: .20s; }
+  .product-card:nth-child(5) { animation-delay: .25s; }
+  .product-card:nth-child(6) { animation-delay: .30s; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--text3);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+  }
+  footer .foot-logo { font-family: 'Bebas Neue', cursive; font-size: 22px; letter-spacing: 3px; color: var(--text2); margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="closeDetail()">TECH<span>VAULT</span></div>
+  <div class="nav-right">
+    <button class="cart-btn" onclick="showCart()">
+      🛒 Cart <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div style="position:relative;">
+    <div class="hero-badge">NEW ARRIVALS 2025 — FREE SHIPPING OVER $50</div>
+    <h1>
+      <span class="line1">POWER YOUR</span>
+      <span class="line2">SETUP</span>
+    </h1>
+    <p>Premium computer accessories engineered for performance. From mechanical keyboards to ultra-fast peripherals — build the rig you deserve.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">480+</div><div class="stat-label">Products</div></div>
+      <div class="stat"><div class="stat-num">50K+</div><div class="stat-label">Happy Builders</div></div>
+      <div class="stat"><div class="stat-num">4.9★</div><div class="stat-label">Avg Rating</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOP -->
+<div class="shop">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">Category</div>
+      <div class="filter-chip active" onclick="filterCategory(this,'all')" data-cat="all">
+        <span class="chip-icon">⚡</span> All Products <span class="chip-count">24</span>
+      </div>
+      <div class="filter-chip" onclick="filterCategory(this,'keyboard')" data-cat="keyboard">
+        <span class="chip-icon">⌨️</span> Keyboards <span class="chip-count">6</span>
+      </div>
+      <div class="filter-chip" onclick="filterCategory(this,'mouse')" data-cat="mouse">
+        <span class="chip-icon">🖱️</span> Mice <span class="chip-count">5</span>
+      </div>
+      <div class="filter-chip" onclick="filterCategory(this,'monitor')" data-cat="monitor">
+        <span class="chip-icon">🖥️</span> Monitors <span class="chip-count">4</span>
+      </div>
+      <div class="filter-chip" onclick="filterCategory(this,'headset')" data-cat="headset">
+        <span class="chip-icon">🎧</span> Headsets <span class="chip-count">4</span>
+      </div>
+      <div class="filter-chip" onclick="filterCategory(this,'webcam')" data-cat="webcam">
+        <span class="chip-icon">📷</span> Webcams <span class="chip-count">3</span>
+      </div>
+      <div class="filter-chip" onclick="filterCategory(this,'hub')" data-cat="hub">
+        <span class="chip-icon">🔌</span> USB Hubs <span class="chip-count">2</span>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Max Price</div>
+      <div class="price-range">
+        <input type="range" min="0" max="500" value="500" id="priceRange" oninput="filterPrice(this.value)">
+        <div class="price-labels"><span>$0</span><span id="priceLabel">$500+</span></div>
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Min Rating</div>
+      <div class="rating-filter">
+        <button class="rating-btn active" onclick="filterRating(this,0)">All</button>
+        <button class="rating-btn" onclick="filterRating(this,4)">4★+</button>
+        <button class="rating-btn" onclick="filterRating(this,4.5)">4.5★+</button>
+        <button class="rating-btn" onclick="filterRating(this,4.8)">4.8★+</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="controls">
+      <button class="filter-toggle" onclick="toggleSidebar()">⚙️ Filters</button>
+      <div class="search-wrap">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="search-input" type="text" placeholder="Search products…" oninput="filterSearch(this.value)" id="searchInput">
+      </div>
+      <select class="sort-select" onchange="sortProducts(this.value)">
+        <option value="featured">Featured</option>
+        <option value="price-low">Price: Low–High</option>
+        <option value="price-high">Price: High–Low</option>
+        <option value="rating">Top Rated</option>
+        <option value="newest">Newest</option>
+      </select>
+    </div>
+    <div class="results-info" id="resultsInfo">Showing 24 products</div>
+    <div class="product-grid" id="productGrid"></div>
+  </main>
+</div>
+
+<!-- PRODUCT DETAIL MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="detail" id="detailPanel">
+    <button class="detail-close" onclick="closeDetail()">✕</button>
+    <div class="detail-grid">
+      <div class="detail-gallery">
+        <div class="main-img" id="mainImg"></div>
+        <div class="thumb-row" id="thumbRow"></div>
+      </div>
+      <div class="detail-info">
+        <div class="detail-brand" id="dBrand"></div>
+        <div class="detail-name" id="dName"></div>
+        <div class="detail-rating">
+          <span class="stars" id="dStars"></span>
+          <span class="rating-count" id="dRatingCount"></span>
+        </div>
+        <div class="detail-price-row">
+          <div class="detail-price" id="dPrice"></div>
+          <div class="detail-price-old" id="dPriceOld"></div>
+          <div class="detail-save" id="dSave"></div>
+        </div>
+        <div class="variant-group" id="variantColor"></div>
+        <div class="variant-group" id="variantSize"></div>
+        <div class="section-label">Quantity</div>
+        <div class="qty-row">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <div class="qty-num" id="qtyNum">1</div>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+        <button class="add-cart-btn" id="addCartBtn" onclick="addToCart()">ADD TO CART</button>
+        <button class="wishlist-btn">♡ Add to Wishlist</button>
+        <div class="detail-features" id="dFeatures"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon">✅</span>
+  <span id="toastMsg">Added to cart!</span>
+</div>
+
+<footer>
+  <div class="foot-logo">TECHVAULT</div>
+  © 2025 TechVault Inc. — Built for builders, gamers & creators.
+</footer>
+
+<script>
+const PRODUCTS = [
+  { id:1, name:'Apex Pro TKL v3', brand:'SteelSeries', category:'keyboard', price:189, oldPrice:229, rating:4.9, reviews:2847, badge:'hot', emoji:'⌨️', emojis:['⌨️','💡','🔧','📦'],
+    colors:['#1a1a1a','#c0c0c0','#ff3d6b'], sizes:['TKL','Full','60%'],
+    features:['OmniPoint 2.0 Adjustable Switches','Per-key RGB illumination','Magnetic wrist rest included','USB-C detachable cable'] },
+  { id:2, name:'G Pro X Superlight 2', brand:'Logitech', category:'mouse', price:159, oldPrice:179, rating:4.8, reviews:5123, badge:'new', emoji:'🖱️', emojis:['🖱️','⚡','🎯','📦'],
+    colors:['#f0f0f0','#1a1a1a','#ff6b9d'], sizes:['Standard'],
+    features:['HERO 2 25K DPI sensor','60g ultra-lightweight','70hr battery life','Wireless 2.4GHz'] },
+  { id:3, name:'Odyssey G9 Neo OLED', brand:'Samsung', category:'monitor', price:1299, oldPrice:1499, rating:4.7, reviews:891, badge:'sale', emoji:'🖥️', emojis:['🖥️','💎','🌈','📦'],
+    colors:['#1a1a1a'], sizes:['49"'],
+    features:['OLED Quantum Mini-LED','240Hz refresh rate','1ms GTG response','DisplayHDR 2000'] },
+  { id:4, name:'Cloud Alpha Wireless', brand:'HyperX', category:'headset', price:199, oldPrice:229, rating:4.8, reviews:3401, badge:null, emoji:'🎧', emojis:['🎧','🔊','⚡','📦'],
+    colors:['#1a1a1a','#e00000'], sizes:['One Size'],
+    features:['300hr battery life','Dual Chamber drivers','Noise-cancelling mic','USB-C charging'] },
+  { id:5, name:'Stream Cam Plus', brand:'Logitech', category:'webcam', price:149, oldPrice:169, rating:4.6, reviews:1204, badge:null, emoji:'📷', emojis:['📷','🎥','💡','📦'],
+    colors:['#f5f5f5','#1a1a1a'], sizes:['1080p','4K'],
+    features:['4K 30fps / 1080p 60fps','AI-powered autofocus','Dual omni mics','USB-C connection'] },
+  { id:6, name:'Thunderbolt 4 Pro Hub', brand:'CalDigit', category:'hub', price:249, oldPrice:299, rating:4.9, reviews:678, badge:null, emoji:'🔌', emojis:['🔌','⚡','🔧','📦'],
+    colors:['#888'], sizes:['Standard'],
+    features:['Thunderbolt 4 upstream','3× TB4 downstream ports','98W host charging','4K@60Hz display support'] },
+  { id:7, name:'BlackWidow V4 Pro', brand:'Razer', category:'keyboard', price:229, oldPrice:249, rating:4.7, reviews:1892, badge:null, emoji:'⌨️', emojis:['⌨️','💚','🔧','📦'],
+    colors:['#1a1a1a','#2d2d2d'], sizes:['Full','TKL'],
+    features:['Razer Yellow Optical Switches','Chroma RGB per-key','Magnetic wrist rest','USB passthrough'] },
+  { id:8, name:'DeathAdder V3 HyperSpeed', brand:'Razer', category:'mouse', price:99, oldPrice:129, rating:4.8, reviews:4201, badge:'sale', emoji:'🖱️', emojis:['🖱️','⚡','🎯','📦'],
+    colors:['#1a1a1a'], sizes:['Standard'],
+    features:['Focus Pro 30K optical','HyperSpeed Wireless','63g ergonomic','90hr battery'] },
+  { id:9, name:'Aorus FO32U2', brand:'Gigabyte', category:'monitor', price:899, oldPrice:999, rating:4.6, reviews:342, badge:'new', emoji:'🖥️', emojis:['🖥️','💎','🌈','📦'],
+    colors:['#1a1a1a'], sizes:['32"'],
+    features:['OLED 4K 240Hz','0.03ms response','HDR True Black 400','KVM switch built-in'] },
+  { id:10, name:'QuadCast S', brand:'HyperX', category:'webcam', price:159, oldPrice:179, rating:4.7, reviews:6702, badge:null, emoji:'🎙️', emojis:['🎙️','🌈','🔊','📦'],
+    colors:['#1a1a1a','#e00000'], sizes:['Standard'],
+    features:['Four polar patterns','Built-in LED lighting','Shock mount suspension','Tap-to-mute sensor'] },
+  { id:11, name:'Arctis Nova Pro', brand:'SteelSeries', category:'headset', price:349, oldPrice:399, rating:4.9, reviews:2103, badge:'hot', emoji:'🎧', emojis:['🎧','💎','🔊','📦'],
+    colors:['#f5f5f5','#1a1a1a'], sizes:['One Size'],
+    features:['Active Noise Cancellation','Simultaneous dual wireless','Swappable batteries','Hi-Res certified audio'] },
+  { id:12, name:'Anker 12-in-1 Dock', brand:'Anker', category:'hub', price:129, oldPrice:159, rating:4.8, reviews:9234, badge:null, emoji:'🔌', emojis:['🔌','⚡','🔧','📦'],
+    colors:['#999','#1a1a1a'], sizes:['Standard'],
+    features:['100W Power Delivery','4K HDMI + DP','SD & MicroSD slots','3× USB-A 3.0'] },
+];
+
+let cartItems = 0;
+let currentProduct = null;
+let currentQty = 1;
+let activeCategory = 'all';
+let maxPrice = 500;
+let minRating = 0;
+let searchQuery = '';
+let sortMode = 'featured';
+
+function getFiltered() {
+  let products = [...PRODUCTS];
+  if (activeCategory !== 'all') products = products.filter(p => p.category === activeCategory);
+  products = products.filter(p => p.price <= (maxPrice >= 500 ? Infinity : maxPrice));
+  products = products.filter(p => p.rating >= minRating);
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    products = products.filter(p => p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
+  }
+  if (sortMode === 'price-low') products.sort((a,b) => a.price - b.price);
+  if (sortMode === 'price-high') products.sort((a,b) => b.price - a.price);
+  if (sortMode === 'rating') products.sort((a,b) => b.rating - a.rating);
+  if (sortMode === 'newest') products.sort((a,b) => b.id - a.id);
+  return products;
+}
+
+function stars(r) {
+  const full = Math.floor(r); const half = r % 1 >= 0.5;
+  let s = '★'.repeat(full);
+  if (half) s += '½';
+  return s;
+}
+
+function renderGrid() {
+  const products = getFiltered();
+  const grid = document.getElementById('productGrid');
+  document.getElementById('resultsInfo').textContent = `Showing ${products.length} product${products.length!==1?'s':''}`;
+  if (!products.length) {
+    grid.innerHTML = `<div class="no-results" style="grid-column:1/-1"><h3>No products found</h3><p>Try adjusting your filters or search term.</p></div>`;
+    return;
+  }
+  grid.innerHTML = products.map(p => `
+    <div class="product-card" onclick="openDetail(${p.id})">
+      ${p.badge ? `<div class="card-badge badge-${p.badge}">${p.badge}</div>` : ''}
+      <div class="card-img">${p.emoji}</div>
+      <div class="card-body">
+        <div class="card-brand">${p.brand}</div>
+        <div class="card-name">${p.name}</div>
+        <div class="card-rating">
+          <span class="stars">${stars(p.rating)}</span>
+          <span class="rating-count">(${p.reviews.toLocaleString()})</span>
+        </div>
+        <div class="card-footer">
+          <div class="price-wrap">
+            ${p.oldPrice ? `<div class="price-old">$${p.oldPrice}</div>` : ''}
+            <div class="price">$${p.price}</div>
+          </div>
+          <button class="quick-add" onclick="quickAdd(event,${p.id})">+</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterCategory(el, cat) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  activeCategory = cat;
+  renderGrid();
+}
+
+function filterPrice(val) {
+  maxPrice = parseInt(val);
+  document.getElementById('priceLabel').textContent = maxPrice >= 500 ? '$500+' : `$${maxPrice}`;
+  renderGrid();
+}
+
+function filterRating(el, rating) {
+  document.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  minRating = rating;
+  renderGrid();
+}
+
+function filterSearch(val) {
+  searchQuery = val;
+  renderGrid();
+}
+
+function sortProducts(val) {
+  sortMode = val;
+  renderGrid();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+function openDetail(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  currentProduct = p;
+  currentQty = 1;
+  document.getElementById('dBrand').textContent = p.brand;
+  document.getElementById('dName').textContent = p.name;
+  document.getElementById('dStars').textContent = stars(p.rating);
+  document.getElementById('dRatingCount').textContent = `${p.rating} · ${p.reviews.toLocaleString()} reviews`;
+  document.getElementById('dPrice').textContent = `$${p.price}`;
+  document.getElementById('dPriceOld').textContent = p.oldPrice ? `$${p.oldPrice}` : '';
+  const save = p.oldPrice ? Math.round((1 - p.price/p.oldPrice)*100) : 0;
+  document.getElementById('dSave').textContent = save ? `Save ${save}%` : '';
+  document.getElementById('qtyNum').textContent = '1';
+  document.getElementById('addCartBtn').textContent = 'ADD TO CART';
+  document.getElementById('addCartBtn').classList.remove('added');
+
+  // Gallery
+  document.getElementById('mainImg').textContent = p.emojis[0];
+  document.getElementById('thumbRow').innerHTML = p.emojis.map((e,i) =>
+    `<div class="thumb ${i===0?'active':''}" onclick="switchThumb(this,'${e}')">${e}</div>`
+  ).join('');
+
+  // Colors
+  const colorGroup = document.getElementById('variantColor');
+  if (p.colors.length > 1) {
+    colorGroup.innerHTML = `<div class="section-label">Color</div><div class="variant-row">${p.colors.map((c,i) =>
+      `<div class="color-btn ${i===0?'active':''}" style="background:${c}" onclick="selectColor(this)"></div>`
+    ).join('')}</div>`;
+  } else { colorGroup.innerHTML = ''; }
+
+  // Sizes
+  const sizeGroup = document.getElementById('variantSize');
+  if (p.sizes.length > 1) {
+    sizeGroup.innerHTML = `<div class="section-label">Size / Layout</div><div class="variant-row">${p.sizes.map((s,i) =>
+      `<button class="variant-btn ${i===0?'active':''}" onclick="selectVariant(this)">${s}</button>`
+    ).join('')}</div>`;
+  } else { sizeGroup.innerHTML = ''; }
+
+  // Features
+  document.getElementById('dFeatures').innerHTML = `<div class="section-label">Key Features</div>` +
+    p.features.map(f => `<div class="feature-item"><span class="feature-icon">◆</span>${f}</div>`).join('');
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDetail() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeDetail();
+}
+
+function switchThumb(el, emoji) {
+  document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('mainImg').textContent = emoji;
+}
+
+function selectColor(el) {
+  el.closest('.variant-row').querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function selectVariant(el) {
+  el.closest('.variant-row').querySelectorAll('.variant-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function changeQty(delta) {
+  currentQty = Math.max(1, Math.min(10, currentQty + delta));
+  document.getElementById('qtyNum').textContent = currentQty;
+}
+
+function addToCart() {
+  const btn = document.getElementById('addCartBtn');
+  btn.textContent = '✓ ADDED!';
+  btn.classList.add('added');
+  cartItems += currentQty;
+  document.getElementById('cartCount').textContent = cartItems;
+  showToast(`${currentProduct.name} × ${currentQty} added to cart`);
+  setTimeout(() => { btn.textContent = 'ADD TO CART'; btn.classList.remove('added'); }, 2000);
+}
+
+function quickAdd(e, id) {
+  e.stopPropagation();
+  const p = PRODUCTS.find(x => x.id === id);
+  cartItems++;
+  document.getElementById('cartCount').textContent = cartItems;
+  showToast(`${p.name} added to cart`);
+}
+
+function showCart() {
+  showToast(cartItems === 0 ? 'Your cart is empty' : `You have ${cartItems} item${cartItems!==1?'s':''} in your cart`);
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// Init
+renderGrid();
+
+// Keyboard close
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
+</script>
+</body>
+</html>
